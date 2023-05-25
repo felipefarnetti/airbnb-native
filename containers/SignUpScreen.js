@@ -8,12 +8,13 @@ import {
   Image,
   View,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Constants from "expo-constants";
 import logo from "../assets/logo.png";
 
-const SignUpScreen = ({ setToken }) => {
+const SignUpScreen = ({ setToken, setId }) => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -21,6 +22,7 @@ const SignUpScreen = ({ setToken }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleSubmit = async () => {
     if (email && username && description && password && confirmPassword) {
@@ -39,6 +41,9 @@ const SignUpScreen = ({ setToken }) => {
         if (response.data.token) {
           const token = response.data.token;
           setToken(token);
+          setId(response.data.id);
+
+          setIsLoading(false);
           alert("Account created");
         } else {
           setErrorMessage("An error ocurred");
@@ -55,7 +60,16 @@ const SignUpScreen = ({ setToken }) => {
     }
   };
 
-  return (
+  return !isLoading ? (
+    <View
+      style={[
+        styles.container,
+        { flexDirection: "row", justifyContent: "space-around", padding: 10 },
+      ]}
+    >
+      <ActivityIndicator size="large" color="#EA5860" />
+    </View>
+  ) : (
     <KeyboardAwareScrollView
       contentContainerStyle={styles.contentContainer}
       style={StyleSheet.container}

@@ -1,4 +1,4 @@
-import { AntDesign } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 
 export const displayStar = (number) => {
   const tab = [];
@@ -6,10 +6,10 @@ export const displayStar = (number) => {
   for (let i = 1; i <= 5; i++) {
     if (i <= number) {
       // si je suis à un tour inférieur ou égale à la note alors j'ajoute un étoile jaune
-      tab.push(<AntDesign name="star" size={24} color="yellow" key={i} />);
+      tab.push(<Entypo name="star" size={18} color="#feb100" key={i} />);
     } else {
       // sinon j'ajoute une étoile grise
-      tab.push(<AntDesign name="star" size={24} color="grey" key={i} />);
+      tab.push(<Entypo name="star" size={18} color="#bbbbbb" key={i} />);
     }
   }
 

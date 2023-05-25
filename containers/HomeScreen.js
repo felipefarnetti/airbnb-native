@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   line: {
-    backgroundColor: "grey",
+    backgroundColor: "lightgrey",
     height: 1,
     marginVertical: 10,
   },

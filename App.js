@@ -3,15 +3,21 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
-import HomeScreen from "./containers/HomeScreen";
 
+//Icons
+import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+
+//Screens
+import HomeScreen from "./containers/HomeScreen";
 import RoomScreen from "./containers/RoomScreen";
 import SignInScreen from "./containers/SignInScreen";
 import SignUpScreen from "./containers/SignUpScreen";
-import SettingsScreen from "./containers/SettingsScreen";
+import MyProfile from "./containers/MyProfile";
 import SplashScreen from "./containers/SplashScreen";
 import HeaderLogo from "./components/HeaderLogo";
+import AroundMe from "./containers/AroundMe";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -19,7 +25,9 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
+  const [userId, setUserId] = useState(null);
 
+  // Async for token
   const setToken = async (token) => {
     if (token) {
       await AsyncStorage.setItem("userToken", token);
@@ -29,18 +37,29 @@ export default function App() {
 
     setUserToken(token);
   };
+  // Async for userId
+  const setId = async (id) => {
+    if (id) {
+      await AsyncStorage.setItem("UserId", id);
+    } else {
+      await AsyncStorage.removeItem("userId");
+    }
+    setUserId(id);
+  };
 
   useEffect(() => {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       // We should also handle error for production apps
       const userToken = await AsyncStorage.getItem("userToken");
+      const userId = await AsyncStorage.getItem("userId");
 
       // This will switch to the App screen or Auth screen and this loading
       // screen will be unmounted and thrown away.
-      setUserToken(userToken);
 
       setIsLoading(false);
+      setUserToken(userToken);
+      setUserId(userId);
     };
 
     bootstrapAsync();
@@ -63,7 +82,7 @@ export default function App() {
                 headerShown: false,
               }}
             >
-              {() => <SignInScreen setToken={setToken} />}
+              {() => <SignInScreen setToken={setToken} setId={setId} />}
             </Stack.Screen>
             <Stack.Screen
               name="SignUp"
@@ -71,7 +90,7 @@ export default function App() {
                 headerShown: false,
               }}
             >
-              {() => <SignUpScreen setToken={setToken} />}
+              {() => <SignUpScreen setToken={setToken} setId={setId} />}
             </Stack.Screen>
           </>
         ) : (
@@ -109,7 +128,7 @@ export default function App() {
                       <Stack.Screen
                         name="Room"
                         options={{
-                          title: "Room",
+                          headerTitle: () => <HeaderLogo />,
                         }}
                       >
                         {() => <RoomScreen />}
@@ -117,13 +136,14 @@ export default function App() {
                     </Stack.Navigator>
                   )}
                 </Tab.Screen>
+
                 <Tab.Screen
-                  name="TabSettings"
+                  name="TabAroundMe"
                   options={{
-                    tabBarLabel: "Settings",
+                    tabBarLabel: "Around me",
                     tabBarIcon: ({ color, size }) => (
-                      <Ionicons
-                        name={"ios-options"}
+                      <MaterialCommunityIcons
+                        name="map-marker-outline"
                         size={size}
                         color={color}
                       />
@@ -133,12 +153,49 @@ export default function App() {
                   {() => (
                     <Stack.Navigator>
                       <Stack.Screen
-                        name="Settings"
+                        name="AroundMe"
+                        component={AroundMe}
                         options={{
-                          title: "Settings",
+                          headerTitle: () => <HeaderLogo />,
+                        }}
+                      />
+                      <Stack.Screen
+                        name="RoomMap"
+                        options={{
+                          title: "Room",
                         }}
                       >
-                        {() => <SettingsScreen setToken={setToken} />}
+                        {() => <RoomScreen />}
+                      </Stack.Screen>
+                    </Stack.Navigator>
+                  )}
+                </Tab.Screen>
+
+                <Tab.Screen
+                  name="TabProfile"
+                  options={{
+                    tabBarLabel: "My profile",
+                    tabBarIcon: ({ color, size }) => (
+                      <AntDesign name="user" size={size} color={color} />
+                    ),
+                  }}
+                >
+                  {() => (
+                    <Stack.Navigator>
+                      <Stack.Screen
+                        name="MyProfile"
+                        options={{
+                          headerTitle: () => <HeaderLogo />,
+                        }}
+                      >
+                        {() => (
+                          <MyProfile
+                            setToken={setToken}
+                            userToken={userToken}
+                            userId={userId}
+                            setId={setId}
+                          />
+                        )}
                       </Stack.Screen>
                     </Stack.Navigator>
                   )}

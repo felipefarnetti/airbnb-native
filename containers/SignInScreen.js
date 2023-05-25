@@ -8,6 +8,7 @@ import {
   Image,
   View,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Constants from "expo-constants";
@@ -18,6 +19,7 @@ const SignInScreen = ({ setToken }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleSubmit = async () => {
     if (email && password) {
@@ -29,11 +31,13 @@ const SignInScreen = ({ setToken }) => {
           `https://lereacteur-bootcamp-api.herokuapp.com/api/airbnb/user/log_in`,
           { email, password }
         );
-        // console.log(JSON.stringify(response, null, 2));
+        // console.log(JSON.stringify(response.data.id, null, 2));
         if (response.data.token) {
           const token = response.data.token;
           setToken(token);
-          console.log(token);
+          setId(response.data.id);
+          // console.log(token);
+          setIsLoading(false);
           alert("You are connected");
         }
       } catch (error) {
@@ -48,7 +52,16 @@ const SignInScreen = ({ setToken }) => {
     }
   };
 
-  return (
+  return !isLoading ? (
+    <View
+      style={[
+        styles.container,
+        { flexDirection: "row", justifyContent: "space-around", padding: 10 },
+      ]}
+    >
+      <ActivityIndicator size="large" color="#EA5860" />
+    </View>
+  ) : (
     <KeyboardAwareScrollView
       contentContainerStyle={styles.contentContainer}
       style={StyleSheet.container}

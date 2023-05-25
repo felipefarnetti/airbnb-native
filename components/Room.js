@@ -4,6 +4,7 @@ import {
   ImageBackground,
   StyleSheet,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
@@ -28,14 +29,22 @@ const Room = ({ item }) => {
         <Text style={styles.price}>{item.price} €</Text>
       </ImageBackground>
 
-      <View>
+      <View style={{ flexDirection: "row" }}>
         <View>
           <Text>{item.title}</Text>
-
           {/* Cette fonction retourne un tableau dont les éléments sont des icônes (auquels ont a ajouté une "key" pour que chaque élément soit identifiable et éviter le warning). React Native est donc en mesure d'afficher chaque élément  */}
-          <View>{displayStar(item.ratingValue)}</View>
+          <View style={{ flexDirection: "row" }}>
+            {displayStar(item.ratingValue)}
+            <Text style={{ color: "grey" }}>{item.reviews} reviews</Text>
+          </View>
+
+          <View>
+            <Image
+              source={{ uri: item.user.account.photo.url }}
+              style={styles.userPhoto}
+            />
+          </View>
         </View>
-        <View></View>
       </View>
     </TouchableOpacity>
   );
@@ -48,7 +57,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
     justifyContent: "flex-end",
-    paddingBottom: 30,
+    marginTop: 5,
+    paddingBottom: 10,
+    marginBottom: 10,
   },
   price: {
     color: "white",
@@ -56,5 +67,12 @@ const styles = StyleSheet.create({
     width: 80,
     paddingVertical: 10,
     paddingLeft: 10,
+    textAlign: "center",
+    fontSize: 16,
+  },
+  userPhoto: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
 });
